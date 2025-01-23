@@ -18,6 +18,7 @@ const {
   loginValidation,
   userUpdateValidation,
 } = require("../middlewares/userValidations");
+const { imageUpload } = require("../middlewares/imageUpload");
 
 router.post("/register", userCreateValidation(), validate, register);
 router.post("/login", loginValidation(), validate, login);

@@ -5,7 +5,7 @@ const imageStorage = multer.diskStorage({
   destination: (req, file, callback) => {
     let folder = "";
     if (req.baseUrl.includes("users")) {
-      folder = "user";
+      folder = "users";
     } else if (req.baseUrl.includes("photos")) {
       folder = "photos";
     }
@@ -26,3 +26,5 @@ const imageUpload = multer({
     callback(null, true);
   },
 });
+
+module.exports = { imageUpload };

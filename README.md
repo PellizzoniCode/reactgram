@@ -17,8 +17,11 @@ ReactGram is a social media application built with React that allows users to sh
     git clone https://github.com/yourusername/reactgram.git
     ```
 2. Navigate to the project directory:
+
+    - for the back end
     ```bash
     cd reactgram
+    cd backend
     ```
 3. Install dependencies:
     ```bash
@@ -29,9 +32,8 @@ ReactGram is a social media application built with React that allows users to sh
 
 1. Start the development server:
     ```bash
-    npm start
-    ```
-2. Open your browser and navigate to `http://localhost:3000`.
+    npm run server
+
 
 ## Contributing
 

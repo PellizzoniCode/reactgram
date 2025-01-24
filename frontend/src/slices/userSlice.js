@@ -1,6 +1,16 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import userService from "../services/userService";
 
+import {
+  getUserDetailsFulfilled,
+  getUserDetailsPending,
+  profileFulfilled,
+  profilePending,
+  updateProfileFulfilled,
+  updateProfilePending,
+  updateProfileRejected,
+} from "../cases/userCases";
+
 const initialState = {
   user: {},
   error: false,
@@ -52,42 +62,13 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(profile.pending, (state) => {
-        state.loading = true;
-        state.error = false;
-      })
-      .addCase(profile.fulfilled, (state, action) => {
-        state.loading = false;
-        state.error = null;
-        state.success = true;
-        state.user = action.payload;
-      })
-      .addCase(updateProfile.pending, (state) => {
-        state.loading = true;
-        state.error = false;
-      })
-      .addCase(updateProfile.fulfilled, (state, action) => {
-        state.loading = false;
-        state.error = false;
-        state.success = true;
-        state.user = action.payload;
-        state.message = "Perfil atualizado com sucesso!";
-      })
-      .addCase(updateProfile.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-        state.user = {};
-      })
-      .addCase(getUserDetails.pending, (state) => {
-        state.loading = true;
-        state.error = false;
-      })
-      .addCase(getUserDetails.fulfilled, (state, action) => {
-        state.loading = false;
-        state.error = null;
-        state.success = true;
-        state.user = action.payload;
-      });
+      .addCase(profile.pending, profilePending)
+      .addCase(profile.fulfilled, profileFulfilled)
+      .addCase(updateProfile.pending, updateProfilePending)
+      .addCase(updateProfile.fulfilled, updateProfileFulfilled)
+      .addCase(updateProfile.rejected, updateProfileRejected)
+      .addCase(getUserDetails.pending, getUserDetailsPending)
+      .addCase(getUserDetails.fulfilled, getUserDetailsFulfilled);
   },
 });
 

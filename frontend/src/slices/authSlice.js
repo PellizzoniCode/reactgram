@@ -1,6 +1,16 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "../services/authService";
 
+import {
+  registerPending,
+  registerFulfilled,
+  registerRejected,
+  logoutFulfilled,
+  loginPending,
+  loginFulfilled,
+  loginRejected,
+} from "../cases/authCases";
+
 const user = JSON.parse(localStorage.getItem("user"));
 const initialState = {
   user: user ? user : null,
@@ -47,42 +57,13 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(register.pending, (state) => {
-        state.loading = true;
-        state.error = false;
-      })
-      .addCase(register.fulfilled, (state, action) => {
-        state.loading = false;
-        state.error = false;
-        state.success = true;
-        state.user = action.payload;
-      })
-      .addCase(register.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-        state.user = null;
-      })
-      .addCase(logout.fulfilled, (state, action) => {
-        state.loading = false;
-        state.error = false;
-        state.success = true;
-        state.user = null;
-      })
-      .addCase(login.pending, (state) => {
-        state.loading = true;
-        state.error = false;
-      })
-      .addCase(login.fulfilled, (state, action) => {
-        state.loading = false;
-        state.error = false;
-        state.success = true;
-        state.user = action.payload;
-      })
-      .addCase(login.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-        state.user = null;
-      });
+      .addCase(register.pending, registerPending)
+      .addCase(register.fulfilled, registerFulfilled)
+      .addCase(register.rejected, registerRejected)
+      .addCase(logout.fulfilled, logoutFulfilled)
+      .addCase(login.pending, loginPending)
+      .addCase(login.fulfilled, loginFulfilled)
+      .addCase(login.rejected, loginRejected);
   },
 });
 

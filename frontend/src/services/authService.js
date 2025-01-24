@@ -25,7 +25,7 @@ const login = async (data) => {
   const config = requestConfig("POST", data);
 
   try {
-    const response = fetch(`${api}/users/login`, config)
+    const response = await fetch(`${api}/users/login`, config)
       .then((res) => res.json())
       .catch((error) => error);
 
@@ -41,7 +41,7 @@ const login = async (data) => {
 const authService = {
   register,
   logout,
-  login
+  login,
 };
 
 export default authService;

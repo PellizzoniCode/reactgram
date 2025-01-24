@@ -26,12 +26,8 @@ const Register = () => {
       password,
       confirmPassword,
     };
-
-    console.log(user);
     dispatch(register(user));
   };
-
-  console.log(loading);
 
   useEffect(() => {
     dispatch(reset());

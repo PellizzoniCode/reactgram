@@ -7,11 +7,13 @@ const User = require("../models/User");
 
 const insertPhoto = async (req, res) => {
   const { title } = req.body;
-  const { image } = req.file.filename;
+  const  image  = req.file.filename;
 
+  
   const reqUser = req.user;
 
   const user = await User.findById(reqUser._id);
+
 
   const newPhoto = await Photo.create({
     image,
@@ -190,5 +192,5 @@ module.exports = {
   updatePhoto,
   likePhoto,
   commentPhoto,
-  searchPhotos
+  searchPhotos,
 };

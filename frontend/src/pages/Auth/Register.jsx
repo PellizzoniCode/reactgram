@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 
 import { register, reset } from "../../slices/authSlice";
 import { useSelector, useDispatch } from "react-redux";
+import Message from "../../components/Message";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -14,7 +15,7 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const dispatch = useDispatch();
-  const { loadidng, error } = useSelector((state) => state.auth);
+  const { loading, error } = useSelector((state) => state.auth);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -29,6 +30,8 @@ const Register = () => {
     console.log(user);
     dispatch(register(user));
   };
+
+  console.log(loading);
 
   useEffect(() => {
     dispatch(reset());
@@ -63,7 +66,10 @@ const Register = () => {
           onChange={(e) => setConfirmPassword(e.target.value)}
           value={confirmPassword || ""}
         />
-        <input type="submit" value="Cadastrar" />
+
+        {!loading && <input type="submit" value="Cadastrar" />}
+        {loading && <input type="submit" value="Aguarde..." disabled />}
+        {error && <Message msg={error} type="error" />}
       </form>
 
       <p>

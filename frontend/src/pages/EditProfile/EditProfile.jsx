@@ -67,8 +67,8 @@ const EditProfile = () => {
 
   const handleFile = (e) => {
     const image = e.target.files[0];
+    
     setPreviewImage(image);
-
     setProfileImage(image);
   };
 

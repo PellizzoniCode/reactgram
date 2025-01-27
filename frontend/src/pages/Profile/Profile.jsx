@@ -14,6 +14,7 @@ import {
   publishPhoto,
   resetMessage,
   getUserPhotos,
+  deletePhoto,
 } from "../../slices/photoSlice";
 
 const Profile = () => {
@@ -59,14 +60,24 @@ const Profile = () => {
 
     setTitle("");
 
-    setTimeout(() => {
-      dispatch(resetMessage());
-    }, 2000);
+    resetComponentMessage();
   };
 
   const handleFile = (e) => {
     const image = e.target.files[0];
     setImage(image);
+  };
+
+  const resetComponentMessage = () => {
+    setTimeout(() => {
+      dispatch(resetMessage());
+    }, 2000);
+  };
+
+  const handleDelete = (id) => {
+    console.log("Delete photo", id);
+    dispatch(deletePhoto(id));
+    resetComponentMessage();
   };
 
   if (loading) {
@@ -116,29 +127,32 @@ const Profile = () => {
         <h2>Fotos Publicadas</h2>
         <div className="photos-container">
           {photos &&
-            photos.map((photo, index) => (
-              <div className="photo" key={photo._id || index}>
-                {photo.image && (
-                  <img
-                    src={`${uploads}/photos/${photo.image}`}
-                    alt={photo.title}
-                  />
-                )}
-                {id === authUser._id ? (
-                  <div className="actions">
-                    <Link to={`/photo/${photo._id}`}>
-                      <BsFillEyeFill />
+            photos.map((photo, index) => {
+              if (!photo || !photo._id || !photo.image) return null;
+              return (
+                <div className="photo" key={photo._id}>
+                  {photo.image && (
+                    <img
+                      src={`${uploads}/photos/${photo.image}`}
+                      alt={photo.title}
+                    />
+                  )}
+                  {id === authUser._id ? (
+                    <div className="actions">
+                      <Link to={`/photo/${photo._id}`}>
+                        <BsFillEyeFill />
+                      </Link>
+                      <BsPencilFill />
+                      <BsXLg onClick={() => handleDelete(photo._id)} />
+                    </div>
+                  ) : (
+                    <Link className="btn" to={`/photo/${photo._id}`}>
+                      Ver
                     </Link>
-                    <BsPencilFill />
-                    <BsXLg />
-                  </div>
-                ) : (
-                  <Link className="btn" to={`/photo/${photo._id}`}>
-                    Ver
-                  </Link>
-                )}
-              </div>
-            ))}
+                  )}
+                </div>
+              );
+            })}
           {photos.length === 0 && <p>Nenhuma foto publicada</p>}
         </div>
       </div>

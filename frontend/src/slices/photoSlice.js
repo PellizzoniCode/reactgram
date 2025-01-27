@@ -7,6 +7,9 @@ import {
   publishPhotoRejected,
   getUserPhotosPending,
   getUserPhotosFulfilled,
+  deletePhotoPending,
+  deletePhotoFulfilled,
+  deletePhotoRejected,
 } from "../cases/photoCases";
 
 const initialState = {
@@ -42,6 +45,20 @@ export const getUserPhotos = createAsyncThunk(
   }
 );
 
+export const deletePhoto = createAsyncThunk(
+  "photo/deletePhoto",
+  async (id, thunkAPI) => {
+    const token = thunkAPI.getState().auth.user.token;
+    const data = await photoService.deletePhoto(id, token);
+
+    if (data.error) {
+      return thunkAPI.rejectWithValue(data.errors[0]);
+    }
+
+    return data;
+  }
+);
+
 export const photoSlice = createSlice({
   name: "photo",
   initialState,
@@ -56,7 +73,10 @@ export const photoSlice = createSlice({
       .addCase(publishPhoto.fulfilled, publishPhotoFulfilled)
       .addCase(publishPhoto.rejected, publishPhotoRejected)
       .addCase(getUserPhotos.pending, getUserPhotosPending)
-      .addCase(getUserPhotos.fulfilled, getUserPhotosFulfilled);
+      .addCase(getUserPhotos.fulfilled, getUserPhotosFulfilled)
+      .addCase(deletePhoto.pending, deletePhotoPending)
+      .addCase(deletePhoto.fulfilled, deletePhotoFulfilled)
+      .addCase(deletePhoto.rejected, deletePhotoRejected);
   },
 });
 

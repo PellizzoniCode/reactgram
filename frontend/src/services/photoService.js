@@ -27,6 +27,20 @@ const getUserPhotos = async (id, token) => {
   }
 };
 
-const photoService = { publishPhoto, getUserPhotos };
+const deletePhoto = async (id, token) => {
+  const config = requestConfig("DELETE", null, token);
+
+  try {
+    const response = await fetch(`${api}/photos/${id}`, config)
+      .then((res) => res.json())
+      .catch((error) => error.response);
+
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const photoService = { publishPhoto, getUserPhotos, deletePhoto };
 
 export default photoService;

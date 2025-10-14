@@ -1,0 +1,79 @@
+name: AI Code Reviewer
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_call:
+    inputs:
+      enable_ai_review:
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  ai_review:
+    runs-on: ubuntu-latest
+    if: ${{ inputs.enable_ai_review || vars.ENABLE_AI_REVIEW == 'true' }}
+
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install openai gitpython requests
+
+      # ✅ Garante que o script e o prompt existem ou baixa do repositório central
+      - name: Ensure AI reviewer files exist
+        run: |
+          mkdir -p scripts
+          mkdir -p prompts
+
+          echo "🔍 Verificando script do revisor..."
+          if [ ! -f scripts/ai_reviewer.py ]; then
+            echo "⚙️ Script não encontrado, baixando da fonte..."
+            curl -L https://raw.githubusercontent.com/PellizzoniCode/ai-code-reviewer/refs/heads/main/scripts/ai_reviewer.py -o scripts/ai_reviewer.py
+          else
+            echo "✅ Script encontrado localmente."
+          fi
+
+          echo "🔍 Verificando arquivo de prompt..."
+          if [ ! -f prompts/Prompt_Reviewer_AI.md ]; then
+            echo "⚙️ Prompt não encontrado, baixando da fonte..."
+            curl -L https://raw.githubusercontent.com/PellizzoniCode/ai-code-reviewer/refs/heads/main/prompts/Prompt_Reviewer_AI.md -o prompts/Prompt_Reviewer_AI.md
+          else
+            echo "✅ Prompt encontrado localmente."
+          fi
+
+      - name: Debug info
+        run: |
+          echo "Evento: ${{ github.event_name }}"
+          echo "Repositório: ${{ github.repository }}"
+          echo "Token presente: ${{ secrets.GITHUB_TOKEN != '' }}"
+          echo "AI Review habilitado: ${{ inputs.enable_ai_review || vars.ENABLE_AI_REVIEW }}"
+
+      - name: Debug prompt presence
+        run: |
+          echo "Verificando existência do prompt..."
+          ls -R prompts || echo "❌ Diretório prompts não encontrado"
+          if [ -f prompts/Prompt_Reviewer_AI.md ]; then
+            echo "✅ Prompt encontrado com sucesso!"
+          else
+            echo "⚠️ Prompt ainda não encontrado!"
+          fi
+      - name: Run AI Code Reviewer
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/ai_reviewer.py

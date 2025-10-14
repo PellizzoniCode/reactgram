@@ -10,6 +10,7 @@ const authGuard = async (req, res, next) => {
   if (!token) {
     return res.status(401).json({ errors: ["Acesso negado!"] });
   }
+  console.log("Token recebido:", token); // Log do token recebido
 
   try {
     const verified = jwt.verify(token, jwtSecret);
